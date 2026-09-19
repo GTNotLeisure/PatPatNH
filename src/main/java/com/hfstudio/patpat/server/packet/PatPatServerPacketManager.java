@@ -28,9 +28,18 @@ public class PatPatServerPacketManager {
 
     public static void register() {
         PatPat.network.registerMessage(PatHandler.class, PatToServerC2SPacket.class, 2, Side.SERVER);
+        if (FMLCommonHandler.instance()
+            .getSide() == Side.SERVER) {
+            registerServerOutboundMessages();
+        }
         FMLCommonHandler.instance()
             .bus()
             .register(EVENTS);
+    }
+
+    private static void registerServerOutboundMessages() {
+        PatPat.network.registerMessage(HelloOutboundHandler.class, HelloS2CPacket.class, 0, Side.CLIENT);
+        PatPat.network.registerMessage(PatOutboundHandler.class, PatS2CPacket.class, 1, Side.CLIENT);
     }
 
     private static boolean canPat(EntityPlayerMP sender, EntityLivingBase target) {
@@ -82,6 +91,22 @@ public class PatPatServerPacketManager {
                 }
                 PatPat.network.sendTo(broadcast, otherPlayer);
             }
+            return null;
+        }
+    }
+
+    public static class HelloOutboundHandler implements IMessageHandler<HelloS2CPacket, IMessage> {
+
+        @Override
+        public IMessage onMessage(HelloS2CPacket message, MessageContext ctx) {
+            return null;
+        }
+    }
+
+    public static class PatOutboundHandler implements IMessageHandler<PatS2CPacket, IMessage> {
+
+        @Override
+        public IMessage onMessage(PatS2CPacket message, MessageContext ctx) {
             return null;
         }
     }
